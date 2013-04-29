@@ -10,3 +10,5 @@ sudo apt-get install iftop iptraf vim curl wget lighttpd -y
 
 echo 'Acquire::http { Proxy "http://172.16.0.110:3142"; };' | sudo tee /etc/apt/apt.conf.d/01apt-cacher-ng-proxy
 
+echo "Downloading Chef Server..."
+sudo cp /vagrant/chef-server-11.deb /var/www/chef-server_11.0.6-1.ubuntu.12.04_amd64.deb
