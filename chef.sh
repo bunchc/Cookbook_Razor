@@ -17,7 +17,7 @@ sudo chef-server-ctl test
 mkdir ~/.chef
 cp /etc/chef-server/admin.pem ~/.chef
 cp /etc/chef-server/chef-validator.pem ~/.chef
-
+cp /etc/chef-server/chef-validator.pem /vagrant/
 # Install chef client
 curl -L https://www.opscode.com/chef/install.sh | sudo bash
 
