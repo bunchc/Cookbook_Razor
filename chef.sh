@@ -46,7 +46,7 @@ cd /root/cookbooks
 sudo knife cookbook site install razor
 sudo knife cookbook upload -o /root/alamo/cookbooks --all
 
-sudo sed -i "s/ipaddress/172.16.0.101/g" /root/cookbooks/razor/attributes/default.rb
+sudo sed -i "s/node\['ipaddress'\]/"172.16.0.101"/g" /root/cookbooks/razor/attributes/default.rb
 sudo knife cookbook upload -o /root/cookbooks --all
 
 sudo knife role from file /root/alamo/roles/*.rb

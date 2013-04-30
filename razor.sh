@@ -24,6 +24,7 @@ validation_client_name	'chef-validator'
 EOF
 
 # Make knife.rb
+mkdir ~/.chef
 sudo cat > ~/.chef/knife.rb <<EOF
 log_level                :info
 log_location             STDOUT
@@ -37,7 +38,6 @@ syntax_check_cache_path  '~/.chef/syntax_check_cache'
 EOF
 
 # Grab our certificates
-mkdir ~/.chef
 cp /vagrant/*.pem ~/.chef
 
 # Register with the Chef-Server
