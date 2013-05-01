@@ -45,5 +45,6 @@ sudo chef-client
 
 # Install us some Razor
 knife node run_list add razor.book razor
+knife node run_list add razor.book recipe[dhcp::server]
 sudo chef-client
 

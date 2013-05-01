@@ -39,15 +39,36 @@ EOF
 # Pull down the Razor & Rackspace OpenStack cookbooks
 sudo git clone git://github.com/opscode/chef-repo.git /root/cookbooks
 sudo git clone --recursive git://github.com/rcbops/chef-cookbooks.git /root/alamo
-
-# Some cleanup
-cd /root/cookbooks
-
 sudo knife cookbook site install razor
+sudo knife cookbook site install dhcp
+
+# Configure the Razor cookbooks
+RAZOR_IP=\"172.16.0.101\"
+sudo sed -i "s/node\['ipaddress'\]/$RAZOR_IP/g" /root/cookbooks/razor/attributes/default.rb
+
+# Configure the DHCP cookbooks
+INTERFACE=\"eth1\"
+sudo sed -i "s/default\[:dhcp\]\[:interfaces\] = \[\]/default\[:dhcp\]\[:interfaces\] = \[ $INTERFACE \]/g" /root/cookbooks/dhcp/attributes/default.rb
+sudo sed -i 's/default\[:dhcp\]\[:parameters\]\[:"next-server"\] = ipaddress/default\[:dhcp\]\[:parameters\]\[:"next-server"\] = '$RAZOR_IP'/g'
+
+# More DHCP Config
+sudo knife databag create dhcp_networks
+mkdir -p /root/databags/dhcp_networks
+sudo cat > /root/databags/dhcp_networks/razor_dhcp.json <<EOF
+{
+	"id": "172-16-0-0_24",
+	"routers": [ "172.16.0.2" ],
+	"address": "172.16.0.0",
+	"netmask": "255.255.255.0",
+	"broadcast": "172.16.0.255",
+	"range": "172.16.0.50 172.16.0.59",
+	"options": [ "next-server 172.16.0.101" ]
+}
+EOF
+sudo knife data bag from file dhcp_networks /root/databags/dhcp_networks/razor_dhcp.json
+
+# Upload all the things!
 sudo knife cookbook upload -o /root/alamo/cookbooks --all
-
-sudo sed -i "s/node\['ipaddress'\]/"172.16.0.101"/g" /root/cookbooks/razor/attributes/default.rb
 sudo knife cookbook upload -o /root/cookbooks --all
-
 sudo knife role from file /root/alamo/roles/*.rb
 
