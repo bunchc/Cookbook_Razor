@@ -47,8 +47,6 @@ RAZOR_IP=\"172.16.0.101\"
 sudo sed -i "s/node\['ipaddress'\]/$RAZOR_IP/g" /root/cookbooks/razor/attributes/default.rb
 
 # Configure the DHCP cookbooks
-INTERFACE=\"eth1\"
-sudo sed -i "s/default\[:dhcp\]\[:interfaces\] = \[\]/default\[:dhcp\]\[:interfaces\] = \[ $INTERFACE \]/g" /root/cookbooks/dhcp/attributes/default.rb
 sudo sed -i 's/default\[:dhcp\]\[:parameters\]\[:"next-server"\] = ipaddress/default\[:dhcp\]\[:parameters\]\[:"next-server"\] = '$RAZOR_IP'/g' /root/cookbooks/dhcp/attributes/default.rb
 sudo sed -i 's/default\[:dhcp\]\[:networks\] = \[\]/default\[:dhcp\]\[:networks\] = \[ "172-16-0-0_24" \]/g' /root/cookbooks/dhcp/attributes/default.rb
 
