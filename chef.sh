@@ -42,13 +42,65 @@ sudo git clone --recursive git://github.com/rcbops/chef-cookbooks.git /root/alam
 sudo knife cookbook site install razor
 sudo knife cookbook site install dhcp
 
-# Configure the Razor cookbooks
-RAZOR_IP=\"172.16.0.101\"
-sudo sed -i "s/node\['ipaddress'\]/$RAZOR_IP/g" /root/cookbooks/razor/attributes/default.rb
+# This is here until the upstream cookbook gets updated:
+sudo cat > /root/cookbooks/dhcp/templates/default/dhcpd.conf.erb <<EOF
+# File managed by Chef
 
-# Configure the DHCP cookbooks
-sudo sed -i 's/default\[:dhcp\]\[:parameters\]\[:"next-server"\] = ipaddress/default\[:dhcp\]\[:parameters\]\[:"next-server"\] = '$RAZOR_IP'/g' /root/cookbooks/dhcp/attributes/default.rb
-sudo sed -i 's/default\[:dhcp\]\[:networks\] = \[\]/default\[:dhcp\]\[:networks\] = \[ "172-16-0-0_24" \]/g' /root/cookbooks/dhcp/attributes/default.rb
+# set this to store vendor strings.
+set vendor-string = option vendor-class-identifier;
+
+<% @allows.each do |allow| -%>
+allow <%= allow %>;
+<% end -%>
+
+<% @parameters.sort.each do |key, value| -%>
+  <%= key %> <%= value %>;
+  <% end -%>
+
+  <% @options.sort.each do |key, value| -%>
+    option <%= key %> <%= value %>;
+    <% end -%>
+
+    <% unless @keys.nil? || @keys.empty? -%>
+      <% @keys.each do |key, data| -%>
+      key "<%= key %>" {
+        algorithm <%= data['algorithm'] %>;
+	  secret "<%= data['secret'] %>";
+	  };
+	    <%end -%>
+	    <%end -%>
+
+	    <% unless @masters.nil? || @masters.empty? -%>
+	    <% @masters.each do |zone, data| -%>
+	    zone <%= zone %>. {
+	      primary <%= data["master"] %>;
+	        key "<%= data["key"] %>";
+		}
+		  <% end -%>
+		  <% end -%>
+
+		  <% if @failover %>
+		  failover peer "<%= node[:domain] %>" { 
+		    <%= @role %>; 
+		      address <%= @my_ip %>;     
+		        port 647;
+			  peer address <%= @peer_ip %>;
+			    peer port 647;
+			      max-response-delay 60;
+			        max-unacked-updates 10;
+				  mclt 3600;
+				    <% if @role =~ /primary/i -%>
+				      split 128;
+				        load balance max seconds 3;
+					  <% end -%>
+					  }
+					  <% end %>
+
+					  include "<%= node[:dhcp][:dir] %>/groups.d/list.conf";
+					  include "<%= node[:dhcp][:dir] %>/subnets.d/list.conf";
+					  include "<%= node[:dhcp][:dir] %>/hosts.d/list.conf";
+
+EOF
 
 # More DHCP Config
 sudo knife data bag create dhcp_networks
@@ -70,4 +122,3 @@ sudo knife data bag from file dhcp_networks /root/databags/dhcp_networks/razor_d
 sudo knife cookbook upload -o /root/alamo/cookbooks --all
 sudo knife cookbook upload -o /root/cookbooks --all
 sudo knife role from file /root/alamo/roles/*.rb
-
