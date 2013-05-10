@@ -53,12 +53,8 @@ sudo cat > ~/.chef/razor.json <<EOF
             "parameters": {
                 "next-server": "172.16.0.101"
            },
-<<<<<<< HEAD
             "networks": [ "172-16-0-0_24" ],
 	    "networks_bag": "dhcp_networks"
-=======
-            "networks": "dhcp_networks"
->>>>>>> 167c92183010d0cb2e67d66c88f98b230c4a140b
         },
         "razor": {
             "bind_address": "172.16.0.101",
