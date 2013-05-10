@@ -41,6 +41,9 @@ EOF
 cp /vagrant/*.pem ~/.chef
 
 # Create our razor node & install razor & dhcp:
+#NETWORK_STRING = \"172.16.0.0_24\"
+NETWORK_STRING = \"dhcp_networks\"
+
 sudo cat > ~/.chef/razor.json <<EOF
 {
     "name": "razor.book",
@@ -50,8 +53,12 @@ sudo cat > ~/.chef/razor.json <<EOF
             "parameters": {
                 "next-server": "172.16.0.101"
            },
+<<<<<<< HEAD
             "networks": [ "172-16-0-0_24" ],
 	    "networks_bag": "dhcp_networks"
+=======
+            "networks": "dhcp_networks"
+>>>>>>> 167c92183010d0cb2e67d66c88f98b230c4a140b
         },
         "razor": {
             "bind_address": "172.16.0.101",
