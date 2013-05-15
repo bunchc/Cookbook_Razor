@@ -49,7 +49,7 @@ sudo cat > ~/.chef/razor.json <<EOF
     "name": "razor.book",
     "chef_environment": "_default",
     "normal": {
-        "dhcp": {
+	"dhcp": {
             "parameters": {
                 "next-server": "172.16.0.101"
            },
@@ -76,6 +76,7 @@ sudo cat > ~/.chef/razor.json <<EOF
     "run_list": [
             "recipe[razor]",
             "recipe[dhcp::server]"
+	    "recipe[bind9]"
     ]
 }
 EOF
