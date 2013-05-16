@@ -10,7 +10,7 @@
 mkdir -p /etc/chef
 cp /vagrant/chef-validator.pem /etc/chef/validation.pem
 
-sudo echo "172.16.0.100         chef.book" >> /etc/hosts
+sudo echo "172.16.0.100         chef.cook.book" >> /etc/hosts
 
 # Install chef client
 curl -L https://www.opscode.com/chef/install.sh | sudo bash
@@ -19,7 +19,7 @@ curl -L https://www.opscode.com/chef/install.sh | sudo bash
 sudo cat > /etc/chef/client.rb <<EOF
 log_level       :info
 log_location    STDOUT
-chef_server_url 'https://chef.book/'
+chef_server_url 'https://chef.cook.book/'
 validation_client_name  'chef-validator'
 EOF
 
@@ -32,7 +32,7 @@ node_name                'admin'
 client_key               '~/.chef/admin.pem'
 validation_client_name   'chef-validator'
 validation_key           '~/.chef/chef-validator.pem'
-chef_server_url          'https://chef.book'
+chef_server_url          'https://chef.cook.book'
 cookbook_path            '/root/cookbooks/'
 syntax_check_cache_path  '~/.chef/syntax_check_cache'
 EOF
@@ -41,18 +41,19 @@ EOF
 cp /vagrant/*.pem ~/.chef
 
 # Create our razor node & install razor & dhcp:
-#NETWORK_STRING = \"172.16.0.0_24\"
-NETWORK_STRING = \"dhcp_networks\"
-
 sudo cat > ~/.chef/razor.json <<EOF
 {
-    "name": "razor.book",
+    "name": "razor.cook.book",
     "chef_environment": "_default",
     "normal": {
 	"dhcp": {
             "parameters": {
                 "next-server": "172.16.0.101"
-           },
+            },
+	    "options": {
+		"domain-name-servers": "172.16.0.101",
+		"domain-name": "\"cook.book\""
+	    },
             "networks": [ "172-16-0-0_24" ],
 	    "networks_bag": "dhcp_networks"
         },
@@ -75,7 +76,7 @@ sudo cat > ~/.chef/razor.json <<EOF
     },
     "run_list": [
             "recipe[razor]",
-            "recipe[dhcp::server]"
+            "recipe[dhcp::server]",
 	    "recipe[bind9]"
     ]
 }

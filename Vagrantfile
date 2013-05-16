@@ -24,7 +24,7 @@ Vagrant.configure("2") do |config|
 	    end
 
             config.vm.define "#{hostname}" do |box|
-                box.vm.hostname = "#{hostname}.book"
+                box.vm.hostname = "#{hostname}.cook.book"
                 box.vm.network :private_network, ip: "172.16.0.#{ip_start+i}", :netmask => "255.255.0.0"
 		if prefix == "node"
 		    box.vm.box = "razor_node"

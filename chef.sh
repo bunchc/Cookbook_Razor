@@ -31,7 +31,7 @@ node_name                'admin'
 client_key               '~/.chef/admin.pem'
 validation_client_name   'chef-validator'
 validation_key           '~/.chef/chef-validator.pem'
-chef_server_url          'https://chef.book'
+chef_server_url          'https://chef.cook.book'
 cookbook_path		 '/root/cookbooks/'
 syntax_check_cache_path  '~/.chef/syntax_check_cache'
 EOF
@@ -126,13 +126,13 @@ mkdir -p /root/databags/zones
 sudo cat > /root/databags/zones/dotBook.json <<EOF
 {
   "id": "dotBook",
-  "domain": ".book",
+  "domain": "cook.book",
   "type": "master",
   "allow_transfer": [ "4.4.4.4",
                       "8.8.8.8" ],
   "zone_info": {
     "global_ttl": 300,
-    "soa": "razor.book.",
+    "soa": "razor.cook.book.",
     "contact": "user.example.com.",
     "serial": 2011091402,
     "nameserver": [ "172.16.0.101" ],
