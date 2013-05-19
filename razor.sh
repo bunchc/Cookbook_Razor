@@ -10,10 +10,22 @@
 mkdir -p /etc/chef
 cp /vagrant/chef-validator.pem /etc/chef/validation.pem
 
-sudo echo "172.16.0.100         chef.cook.book" >> /etc/hosts
-
 # Install chef client
 curl -L https://www.opscode.com/chef/install.sh | sudo bash
+
+# Setup some entries
+sudo cat > /etc/hosts <<EOF
+127.0.0.1	localhost
+172.16.0.101	razor.cook.book razor precise64
+
+# The following lines are desirable for IPv6 capable hosts
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+172.16.0.100         chef.cook.book
+EOF
 
 # Make client.rb
 sudo cat > /etc/chef/client.rb <<EOF
@@ -51,8 +63,7 @@ sudo cat > ~/.chef/razor.json <<EOF
                 "next-server": "172.16.0.101"
             },
 	    "options": {
-		"domain-name-servers": "172.16.0.101",
-		"domain-name": "\"cook.book\""
+		"domain-name-servers": "172.16.0.101"
 	    },
             "networks": [ "172-16-0-0_24" ],
 	    "networks_bag": "dhcp_networks"
@@ -62,11 +73,11 @@ sudo cat > ~/.chef/razor.json <<EOF
             "images": {
                 "razor-mk": {
                     "type": "mk",
-                    "url": "https://downloads.puppetlabs.com/razor/iso/dev/rz_mk_dev-image.0.12.0.iso",
+                    "url": "http://172.16.0.110/rz_mk_dev-image.0.12.0.iso",
                     "action": "add"
                 },
                 "precise64": {
-                    "url": "http://mirror.anl.gov/pub/ubuntu-iso/CDs/precise/ubuntu-12.04.2-server-amd64.iso",
+                    "url": "http://172.16.0.110/ubuntu-12.04.2-server-amd64.iso",
                     "version": "12.04",
                     "action": "add"
                 }
@@ -76,8 +87,7 @@ sudo cat > ~/.chef/razor.json <<EOF
     },
     "run_list": [
             "recipe[razor]",
-            "recipe[dhcp::server]",
-	    "recipe[bind9]"
+            "recipe[dhcp::server]"
     ]
 }
 EOF
@@ -85,3 +95,6 @@ EOF
 knife node from file ~/.chef/razor.json
 
 sudo chef-client
+
+# Setup some entries and install DNSMasq
+sudo apt-get install -y dnsmasq

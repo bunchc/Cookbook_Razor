@@ -39,7 +39,6 @@ EOF
 # Pull down the Razor & Rackspace OpenStack cookbooks
 sudo git clone git://github.com/opscode/chef-repo.git /root/cookbooks
 sudo git clone --recursive git://github.com/rcbops/chef-cookbooks.git /root/alamo
-sudo git clone https://github.com/Youscribe/bind9-cookbook.git /root/cookbooks/bind9
 sudo knife cookbook site install razor
 sudo knife cookbook site install dhcp
 
@@ -109,7 +108,7 @@ mkdir -p /root/databags/dhcp_networks
 sudo cat > /root/databags/dhcp_networks/razor_dhcp.json <<EOF
 {
 	"id": "172-16-0-0_24",
-	"routers": [ "172.16.0.2" ],
+	"routers": [ "172.16.0.110" ],
 	"address": "172.16.0.0",
 	"netmask": "255.255.255.0",
 	"broadcast": "172.16.0.255",
@@ -118,38 +117,6 @@ sudo cat > /root/databags/dhcp_networks/razor_dhcp.json <<EOF
 }
 EOF
 sudo knife data bag from file dhcp_networks /root/databags/dhcp_networks/razor_dhcp.json
-
-# Create the DNS databag
-sudo knife data bag create zones
-sudo knife data bag create zones dotBook
-mkdir -p /root/databags/zones
-sudo cat > /root/databags/zones/dotBook.json <<EOF
-{
-  "id": "dotBook",
-  "domain": "cook.book",
-  "type": "master",
-  "allow_transfer": [ "4.4.4.4",
-                      "8.8.8.8" ],
-  "zone_info": {
-    "global_ttl": 300,
-    "soa": "razor.cook.book.",
-    "contact": "user.example.com.",
-    "serial": 2011091402,
-    "nameserver": [ "172.16.0.101" ],
-    "records": [{
-      "name": "razor",
-      "type": "A",
-      "ip": "172.16.0.101"
-    },{
-      "name": "chef",
-      "type": "A",
-      "ip": "172.16.0.100"
-    }]
-  }
-}
-EOF
-
-knife data bag from file zones /root/databags/zones/dotBook.json
 
 # Upload all the things!
 sudo knife cookbook upload -o /root/alamo/cookbooks --all
