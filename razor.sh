@@ -73,11 +73,11 @@ sudo cat > ~/.chef/razor.json <<EOF
             "images": {
                 "razor-mk": {
                     "type": "mk",
-                    "url": "http://172.16.0.110/rz_mk_dev-image.0.12.0.iso",
+                    "url": "http://172.16.0.110:8080/rz_mk_dev-image.0.12.0.iso",
                     "action": "add"
                 },
                 "precise64": {
-                    "url": "http://172.16.0.110/ubuntu-12.04.2-server-amd64.iso",
+                    "url": "http://172.16.0.110:8080/ubuntu-12.04.2-server-amd64.iso",
                     "version": "12.04",
                     "action": "add"
                 }

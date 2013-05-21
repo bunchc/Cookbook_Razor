@@ -77,23 +77,52 @@ EOF
 
 service squid3 restart
 
-# Setup our repo's
-sudo apt-get install python-software-properties -y
-sudo add-apt-repository ppa:ubuntu-cloud-archive/grizzly-staging
+# Setup lighttpd
 sudo apt-get update
 sudo apt-get install iftop iptraf vim curl wget lighttpd -y
+sudo echo 'server.port = 8080' >> /etc/lighttpd/lighttpd.conf
+sudo service lighttpd restart
 
-echo 'Acquire::http { Proxy "http://172.16.0.110:3142"; };' | sudo tee /etc/apt/apt.conf.d/01apt-cacher-ng-proxy
-
+# Download the images so we don't have to do this again
 echo 'Downloading Razor images...'
 wget --quiet http://mirror.anl.gov/pub/ubuntu-iso/CDs/precise/ubuntu-12.04.2-server-amd64.iso -O /var/www/ubuntu-12.04.2-server-amd64.iso
 wget --quiet https://downloads.puppetlabs.com/razor/iso/dev/rz_mk_dev-image.0.12.0.iso -O /var/www/rz_mk_dev-image.0.12.0.iso
 
-# Enable NAT for the nodes
+# Setup NAT & Transparent squid
+# squid proxy's IP address (which is attached to eth0)
+SQUID_SERVER=`ifconfig eth0 | sed -ne 's/.*inet addr:\([^ ]*\).*/\1/p'`
+ 
+# interface connected to WAN
+INTERNET="eth0"
+ 
+# interface connected to LAN
+LAN_IN="eth0"
+ 
+# squid port
+SQUID_PORT="3128"
+ 
+# clean old firewall
+iptables -F
+iptables -X
+iptables -t nat -F
+iptables -t nat -X
+iptables -t mangle -F
+iptables -t mangle -X
+ 
+# load iptables modules for NAT masquerade and IP conntrack
+modprobe ip_conntrack
+modprobe ip_conntrack_ftp
+ 
+# define necessary redirection for incoming http traffic (e.g., 80)
+iptables -t nat -A PREROUTING -i $LAN_IN -p tcp --dport 80 -j REDIRECT --to-port $SQUID_PORT
+ 
+# forward locally generated http traffic to Squid
+iptables -t nat -A OUTPUT -p tcp --dport 80 -m owner --uid-owner proxy -j ACCEPT
+iptables -t nat -A OUTPUT -p tcp --dport 80 -j REDIRECT --to-ports $SQUID_PORT
+ 
+# forward the rest of non-http traffic
+iptables --table nat --append POSTROUTING --out-interface $INTERNET -j MASQUERADE
+iptables --append FORWARD --in-interface $INTERNET -j ACCEPT
+ 
+# enable IP forwarding for proxy
 echo 1 > /proc/sys/net/ipv4/ip_forward
-sudo /sbin/iptables -t nat -A PREROUTING -i eth1 -p tcp -m tcp --dport 80 -j DNAT --to-destination 172.16.0.110:3128
-sudi /sbin/iptables -t nat -A PREROUTING -i eth0 -p tcp -m tcp --dport 80 -j REDIRECT --to-ports 3128
-sudo /sbin/iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-sudo /sbin/iptables -A FORWARD -i eth0 -o eth1 -m state --state RELATED,ESTABLISHED -j ACCEPT
-sudo /sbin/iptables -A FORWARD -i eth1 -o eth0 -j ACCEPT
-
