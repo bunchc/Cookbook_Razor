@@ -58,7 +58,6 @@ Vagrant.configure("2") do |config|
 			vbox.customize ["modifyvm", :id, "--boot1", "net"]
 			vbox.customize ["modifyvm", :id, "--nic1", "hostonly"]
 			vbox.customize ["modifyvm", :id, "--hostonlyadapter1", "vboxnet0"]
-			vbox.customize ["modifyvm", :id, "--memory", 3128]
 		    end
                 end
             end

@@ -1,6 +1,6 @@
 {
-  "name": "openstack",
-  "description": "",
+  "name": "tap",
+  "description": "Chef-server example environment",
   "cookbook_versions": {
   },
   "json_class": "Chef::Environment",
@@ -8,71 +8,51 @@
   "default_attributes": {
   },
   "override_attributes": {
-    "vips": {
-    },
-    "package_component": "folsom",
-    "osops_networks": {
-      "management": "192.168.1.0/24",
-      "public": "192.168.1.0/24",
-      "nova": "192.168.1.0/24"
-    },
-    "nova": {
-      "network": {
-        "dmz_cidr": "192.168.10.0/24",
-        "public_interface": "eth0",
-        "multi_host": true,
-        "fixed_range": "192.168.20.0/24"
-      },
-        "apply_patches": true,
-        "networks": [
-          {
-            "bridge": "br100",
-            "num_networks": "1",
-            "dns2": "8.8.4.4",
-            "dns1": "8.8.8.8",
-            "ipv4_cidr": "192.168.20.0/24",
-            "network_size": "256",
-            "label": "public",
-            "bridge_dev": "eth1"
-          }
-        ]
-      },
-      "keystone": {
-        "admin_user": "admin",
-        "tenants": [
-          "admin",
-          "service"
-        ],
-        "users": {
-          "admin": {
-            "password": "ostackdemo",
-            "roles": {
-              "admin": [
-                  "admin"
-            ]
-          }
-        }
-      }
-    },
-    "horizon": {
-      "theme": "Rackspace"
-    },
-    "mysql": {
-      "root_network_acl": "%",
-      "allow_remote_root": true
-    },
-    "monitoring": {
-      "procmon_provider": "monit",
-      "metric_provider": "collectd"
-    },
     "glance": {
       "images": [
-
+        "cirros",
+        "precise"
       ],
-      "image": {
-      },
-      "image_upload": false
+      "image_upload": true
     },
-    "developer_mode": false
+    "nova": {
+      "libvirt": {
+        "virt_type": "qemu"
+      },
+      "ratelimit": {
+        "api": {
+          "enabled": true
+        },
+        "volume": {
+          "enabled": true
+        }
+      },
+      "networks": [
+        {
+          "label": "public",
+          "bridge_dev": "eth1",
+          "dns2": "8.8.4.4",
+          "num_networks": "1",
+          "ipv4_cidr": "10.10.100.0/24",
+          "network_size": "255",
+          "bridge": "br100",
+          "dns1": "8.8.8.8"
+        }
+      ]
+    },
+    "developer_mode": false,
+    "mysql": {
+      "allow_remote_root": true,
+      "root_network_acl": "%"
+    },
+    "osops_networks": {
+      "nova": "172.16.0.0/24",
+      "public": "172.16.0.0/24",
+      "management": "172.16.0.0/24"
+    },
+    "monitoring": {
+      "metric_provider": "collectd",
+      "procmon_provider": "monit"
+    }
   }
 }
