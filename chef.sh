@@ -122,4 +122,4 @@ sudo knife data bag from file dhcp_networks /root/databags/dhcp_networks/razor_d
 sudo knife cookbook upload -o /root/alamo/cookbooks --all
 sudo knife cookbook upload -o /root/cookbooks --all
 sudo knife role from file /root/alamo/roles/*.rb
-sudo knife environment from file /vagrant/cookbook.json
+sudo knife environment from file /vagrant/openstack.json

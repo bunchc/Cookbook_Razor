@@ -88,6 +88,9 @@ echo 'Downloading Razor images...'
 wget --quiet http://mirror.anl.gov/pub/ubuntu-iso/CDs/precise/ubuntu-12.04.2-server-amd64.iso -O /var/www/ubuntu-12.04.2-server-amd64.iso
 wget --quiet https://downloads.puppetlabs.com/razor/iso/dev/rz_mk_dev-image.0.12.0.iso -O /var/www/rz_mk_dev-image.0.12.0.iso
 
+# Install IPTables
+sudo apt-get install -y iptables
+
 # Setup NAT & Transparent squid
 # squid proxy's IP address (which is attached to eth0)
 SQUID_SERVER=`ifconfig eth0 | sed -ne 's/.*inet addr:\([^ ]*\).*/\1/p'`
