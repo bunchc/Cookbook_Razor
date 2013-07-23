@@ -73,13 +73,18 @@ sudo cat > ~/.chef/razor.json <<EOF
             "images": {
                 "razor-mk": {
                     "type": "mk",
-                    "url": "http://172.16.0.110:8080/rz_mk_dev-image.0.12.0.iso",
+                    "url": "https://github.com/johnmdilley/Razor-Microkernel/releases/download/0.12-tlc5-alpha3/rz_mk_debug-image.0.12.0.5-gff2f212-dirty.iso",
                     "action": "add"
                 },
                 "precise64": {
-                    "url": "http://172.16.0.110:8080/ubuntu-12.04.2-server-amd64.iso",
+                    "url": "http://mirror.anl.gov/pub/ubuntu-iso/CDs/precise/ubuntu-12.04.2-server-amd64.iso",
                     "version": "12.04",
                     "action": "add"
+                },
+                "centos64": {
+                        "url": "http://mirror.rackspace.com/CentOS/6/isos/x86_64/CentOS-6.4-x86_64-minimal.iso",
+                        "version": "6.4",
+                        "action": "add"
                 }
             }
         },

@@ -2,7 +2,6 @@
 # vi: set ft=ruby :
 
 nodes = {
-    'proxy'	=> [1, 110],
     'chef'  => [1, 100],
     'razor'   => [1, 101],
     'node'   => [3, 103],
