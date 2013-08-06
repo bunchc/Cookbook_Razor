@@ -38,7 +38,15 @@ EOF
 
 # Pull down the Razor & Rackspace OpenStack cookbooks
 sudo git clone git://github.com/opscode/chef-repo.git /root/cookbooks
-sudo git clone -b grizzly --recursive git://github.com/rcbops/chef-cookbooks.git /root/alamo
+#sudo git clone -b grizzly --recursive git://github.com/rcbops/chef-cookbooks.git /root/alamo
+
+git clone https://github.com/rcbops/chef-cookbooks.git
+cd chef-cookbooks
+git checkout v4.0.0
+git submodule init
+git submodule sync
+git submodule update
+
 sudo knife cookbook site install razor
 sudo knife cookbook site install dhcp
 
@@ -119,7 +127,7 @@ EOF
 sudo knife data bag from file dhcp_networks /root/databags/dhcp_networks/razor_dhcp.json
 
 # Upload all the things!
-sudo knife cookbook upload -o /root/alamo/cookbooks --all
+sudo knife cookbook upload -o /root/chef-cookbooks/cookbooks --all
 sudo knife cookbook upload -o /root/cookbooks --all
 sudo knife role from file /root/alamo/roles/*.rb
 sudo knife environment from file /vagrant/openstack.json

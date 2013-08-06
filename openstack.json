@@ -1,6 +1,6 @@
 {
-  "name": "tap",
-  "description": "Chef-server example environment",
+  "name": "openstack",
+  "description": "rpcs v4",
   "cookbook_versions": {
   },
   "json_class": "Chef::Environment",
@@ -8,51 +8,31 @@
   "default_attributes": {
   },
   "override_attributes": {
-    "glance": {
-      "images": [
-        "cirros",
-        "precise"
-      ],
-      "image_upload": true
+    "libvirt": {
+      "virt_type": "qemu"
     },
     "nova": {
-      "libvirt": {
-        "virt_type": "qemu"
-      },
-      "ratelimit": {
-        "api": {
-          "enabled": true
-        },
-        "volume": {
-          "enabled": true
-        }
-      },
       "networks": [
         {
           "label": "public",
-          "bridge_dev": "eth1",
+          "bridge_dev": "eth0",
           "dns2": "8.8.4.4",
           "num_networks": "1",
-          "ipv4_cidr": "10.10.100.0/24",
+          "ipv4_cidr": "172.16.172.0/24",
           "network_size": "255",
           "bridge": "br100",
           "dns1": "8.8.8.8"
         }
       ]
     },
-    "developer_mode": false,
     "mysql": {
       "allow_remote_root": true,
       "root_network_acl": "%"
     },
     "osops_networks": {
-      "nova": "172.16.0.0/24",
-      "public": "172.16.0.0/24",
-      "management": "172.16.0.0/24"
-    },
-    "monitoring": {
-      "metric_provider": "collectd",
-      "procmon_provider": "monit"
+      "nova": "10.127.83.0/25",
+      "public": "10.127.83.0/25",
+      "management": "10.127.83.0/25"
     }
   }
 }
