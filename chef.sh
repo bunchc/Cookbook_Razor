@@ -47,6 +47,10 @@ git submodule init
 git submodule sync
 git submodule update
 
+knife cookbook upload -a -o cookbooks
+knife role from file roles/*rb
+
+
 sudo knife cookbook site install razor
 sudo knife cookbook site install dhcp
 
@@ -127,7 +131,5 @@ EOF
 sudo knife data bag from file dhcp_networks /root/databags/dhcp_networks/razor_dhcp.json
 
 # Upload all the things!
-sudo knife cookbook upload -o /home/vagrant/chef-cookbooks/cookbooks --all
 sudo knife cookbook upload -o /root/cookbooks --all
-sudo knife role from file /home/vagrant/chef-cookbooks/roles/*.rb
 sudo knife environment from file /vagrant/openstack.json
